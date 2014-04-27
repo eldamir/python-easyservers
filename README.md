@@ -3,6 +3,9 @@ python-easyservers
 
 The easy way to create servers and client for any task with python.
 
+The server
+----------
+
 When making a server, simply define function that determines what to do when the server receives a message.
 
 Let the function use these parameters
@@ -14,9 +17,13 @@ def server_message_handler(message, address, send):
 
 The `message` is the message received from a client. The `address` is the address that the message was received from. `send` is a method that can be used to send a message from the server. Use it like this:
 
+```python
+send("My message", address)
 ```
 
+An address is simply a tuple of IP and port: `("123.456.798", 1234)`
 
+A full example of a chat app is seen below. The `server_handle` method is the method that the server runs. At the bottom of the example, you can see how to strap the function into the server:
 
 ```python
 from udpserver import UDPServer
@@ -108,7 +115,25 @@ def ping_clients(server):
         time.sleep(10)
 
 if __name__ == '__main__':
-    server = UDPServer(server_handle, port=15123)
+    # Create a server that uses server_handle on port 1234
+    server = UDPServer(server_handle, port=1234)
+    
+    # Make the server run ping_clients in another thread
     server.create_thread(ping_clients, (server,))
+    
+    # Run the server
     server.run()
 ```
+
+Simply create the server with the desired function and port. In this example, we want the server to do something other than respond to a request. To that end, we defined the function `ping_clients`, and strapped it into the server by using `create_thread`. What this does is to simply run the function in its own thread. If you do not want to run the thread instantly, pass the start option:
+
+```python
+thread = server.create_thread(ping_client, (server,), start=False)
+# Thread is not yet started. Start it by doing
+thread.start()
+```
+
+The run method will block the main thread and run an infinite loop, responding to requests as they come in.
+
+the client
+----------
