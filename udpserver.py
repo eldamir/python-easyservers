@@ -1,6 +1,6 @@
 import socket
 
-from generic_servers.easy_threading import FunctionThread, ServerBase
+from easy_threading import FunctionThread, ServerBase
 
 
 __author__ = 'Ruben Nielsen'
